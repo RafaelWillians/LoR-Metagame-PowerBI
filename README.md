@@ -21,6 +21,8 @@ Então com estes dados, pretendo usar o Power BI para tentar responder as pergun
 - Qual deck mais perde do que vence?
 - Qual matchup tem mais jogos registrados?
 
+##  Fluxo no Power Automate para extração dos dados - [Link](/PowerAutomate)
+
 ## Relatório Power BI (com navegação) - em breve 
 
 ## Relatório Power BI (em PDF) - em breve
