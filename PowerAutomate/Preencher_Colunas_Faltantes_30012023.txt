@@ -1,0 +1,29 @@
+DISABLE Clipboard.GetText Text=> ClipboardText
+SET ContadorTotalColunas TO FirstFreeColumn
+SET ContadorColuna TO ContadorTotalColunas
+SET ContadorLinha TO 2
+LOOP FOREACH CurrentItemSepararDeck IN ExcelData
+    Excel.ReadFromExcel.ReadCell Instance: ExcelInstance StartColumn: 1 StartRow: ContadorLinha ReadAsText: True CellValue=> ListaStatusDeck
+    Text.Replace Text: ListaStatusDeck TextToFind: $'''Games:''' IsRegEx: False IgnoreCase: False ReplaceWith: $'''; ''' ActivateEscapeSequences: False Result=> Replaced
+    Text.Replace Text: Replaced TextToFind: $'''Winrate:''' IsRegEx: False IgnoreCase: False ReplaceWith: $'''; ''' ActivateEscapeSequences: False Result=> Replaced
+    Text.Replace Text: Replaced TextToFind: $'''Playrate:''' IsRegEx: False IgnoreCase: False ReplaceWith: $'''; ''' ActivateEscapeSequences: False Result=> Replaced
+    DISABLE Text.ParseText.ParseForFirstOccurrence Text: ClipboardText TextToFind: $'''Games: ''' StartingPosition: 0 IgnoreCase: False OccurrencePosition=> Position
+    DISABLE Text.SplitText.SplitWithDelimiter Text: Replaced CustomDelimiter: $'''; ''' IsRegEx: False Result=> TextList
+    Text.RecognizeEntitiesInText Text: Replaced Mode: Text.RecognizerMode.Number Language: Text.RecognizerLanguage.English RecognizedEntities=> RecognizedEntities
+    DISABLE SET Tabela1 TO RecognizedEntities
+    DISABLE SET Tabela2 TO RecognizedEntities
+    DISABLE SET Tabela3 TO RecognizedEntities
+    Variables.RetrieveDataTableColumnIntoList DataTable: RecognizedEntities ColumnNameOrIndex: 1 ColumnAsList=> ColumnAsList
+    LOOP FOREACH CurrentItemListaColuna IN ColumnAsList
+        DISABLE Excel.GetFirstFreeColumnRow Instance: ExcelInstance FirstFreeColumn=> FirstFreeColumn FirstFreeRow=> FirstFreeRow
+        Excel.WriteToExcel.WriteCell Instance: ExcelInstance Value: CurrentItemListaColuna Column: ContadorColuna Row: ContadorLinha
+        Variables.IncreaseVariable Value: ContadorColuna IncrementValue: 1
+    END
+    Variables.IncreaseVariable Value: ContadorLinha IncrementValue: 1
+    SET ContadorColuna TO ContadorTotalColunas
+END
+DISABLE LOOP FOREACH CurrentItem IN ColumnAsList
+    DISABLE Display.ShowMessageDialog.ShowMessage Title: $'''Teste''' Message: CurrentItem Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: False ButtonPressed=> ButtonPressed
+DISABLE END
+DISABLE Variables.DeleteRowFromDataTable DataTable: RecognizedEntities RowIndex: 0
+DISABLE Display.ShowMessageDialog.ShowMessage Title: $'''Teste''' Message: ColumnAsList Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: False ButtonPressed=> ButtonPressed

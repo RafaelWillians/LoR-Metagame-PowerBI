@@ -13,6 +13,7 @@ LOOP FOREACH CurrentItem IN ExcelData
 END
 Variables.DecreaseVariable Value: FirstFreeRow DecrementValue: 1
 Excel.DeleteRow Instance: ExcelInstance Index: FirstFreeRow
+CALL Preencher_Colunas_Faltantes
 DISABLE Excel.SelectCellsFromExcel.SelectCells Instance: ExcelInstance StartColumn: $'''A''' StartRow: 1 EndColumn: $'''A''' EndRow: 1
 DateTime.GetCurrentDateTime.Local DateTimeFormat: DateTime.DateTimeFormat.DateAndTime CurrentDateTime=> CurrentDateTime
 Text.ConvertDateTimeToText.FromCustomDateTime DateTime: CurrentDateTime CustomFormat: $'''dd_MM_yyyy_HHmm_''' Result=> FormattedDateTime
